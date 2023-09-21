@@ -121,7 +121,7 @@ Resources:
     IAMPolicyEc2:
         Type: AWS::IAM::ManagedPolicy
         Properties:
-            ManagedPolicyName: !Join [ "-", ["policy-ec2-db-top-solution", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+            ManagedPolicyName: !Join [ "-", ["policy-ec2-in-memory-db-tool-box", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
             PolicyDocument: !Sub |
                 {
                     "Version": "2012-10-17",
@@ -178,7 +178,7 @@ Resources:
         DependsOn: IAMPolicyEc2
         Properties:
             Path: "/"
-            RoleName: !Join [ "-", ["role-ec2-db-top-solution", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+            RoleName: !Join [ "-", ["role-ec2-in-memory-db-tool-box", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
             AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
             MaxSessionDuration: 3600
             Description: "Allows EC2 instance to call AWS services on your behalf."
@@ -190,7 +190,7 @@ Resources:
         Type: "AWS::IAM::Role"
         Properties:
             Path: "/"
-            RoleName: !Join [ "-", ["role-cognito-db-top-solution", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+            RoleName: !Join [ "-", ["role-cognito-in-memory-db-tool-box", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
             AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cognito-idp.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
             MaxSessionDuration: 3600
             Description: "Allows Cognito to use SMS MFA on your behalf."
@@ -241,21 +241,21 @@ Resources:
                     cd in-memory-db-tool-box
                     sudo cp -r server frontend conf /aws/apps
                     
-                    echo '{ "aws_region": "${AWS::Region}","aws_cognito_user_pool_id": "${CognitoUserPool}","aws_cognito_user_pool_web_client_id": "${CognitoUserPoolClient}","aws_api_port": 3001,  "aws_token_expiration":24, "aws_redis_server" : "${RedisServer}", "aws_redis_port" : "${RedisPort}" }' > /aws/apps/conf/aws-exports.json
+                    echo '{ "aws_region": "${AWS::Region}","aws_cognito_user_pool_id": "${CognitoUserPool}","aws_cognito_user_pool_web_client_id": "${CognitoUserPoolClient}","aws_api_port": 3000,  "aws_token_expiration":24, "aws_redis_server" : "${RedisServer}", "aws_redis_port" : "${RedisPort}" }' > /aws/apps/conf/aws-exports.json
                     cd /aws/apps
                     sudo -u ec2-user sh conf/setup.sh
        
             Tags: 
               - 
                 Key: "Name"
-                Value: !Join [ "-", ["ec2-db-top-solution", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+                Value: !Join [ "-", ["ec2-in-memory-db-tool-box", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
               
     
     VPCSecurityGroup:
         Type: "AWS::EC2::SecurityGroup"
         Properties:
-            GroupDescription: !Join [ "_", ["sg_security_group_db_top_solution", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
-            GroupName: !Join [ "_", ["sg_security_group_db_top_solution", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+            GroupDescription: !Join [ "_", ["sg_security_group_in_memory_db_tool_box", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+            GroupName: !Join [ "_", ["sg_security_group_in_memory_db_tool_box", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
             VpcId: !Ref VPCParam
             SecurityGroupIngress: 
                 - 
@@ -273,7 +273,7 @@ Resources:
     CognitoUserPool:
         Type: "AWS::Cognito::UserPool"
         Properties:
-            UserPoolName: !Join [ "-", ["AwsDbTopSolutionUserPool", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+            UserPoolName: !Join [ "-", ["AwsInMemoryDbToolBoxUserPool", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
             Policies: 
                 PasswordPolicy: 
                     MinimumLength: 8
@@ -310,7 +310,7 @@ Resources:
         Type: "AWS::Cognito::UserPoolClient"
         Properties:
             UserPoolId: !Ref CognitoUserPool
-            ClientName: !Join [ "-", ["AwsDbTopSolutionUserPoolClient", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+            ClientName: !Join [ "-", ["AwsInMemoryDbToolBoxUserPoolClient", !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
             RefreshTokenValidity: 1
             ReadAttributes: 
               - "address"
