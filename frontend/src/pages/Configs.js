@@ -1,5 +1,14 @@
 
 const domain = window.location.hostname;
+var wsProtocol = "";
+
+console.log(window.location.protocol);
+
+if (window.location.protocol=="http:")
+    wsProtocol = "ws";
+else
+    wsProtocol = "wss";
+
 
 export const configuration = 
 {
@@ -8,7 +17,7 @@ export const configuration =
         "api-url": "",
         "release" : "0.1.0",
         "application-title": "AWS ElasticCache - Demo Data Types",
-        "socket-url": "ws://" + domain + ":3002",
+        "socket-url": wsProtocol + "://" + domain + ":3003",
     }
     
 };
