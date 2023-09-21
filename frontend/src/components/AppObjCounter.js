@@ -1,42 +1,24 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Button from "@cloudscape-design/components/button";
+import Input from "@cloudscape-design/components/input";
+import ColumnLayout from "@cloudscape-design/components/column-layout";
+import ExpandableSection from "@cloudscape-design/components/expandable-section";
 
-function Counter({ apiUrl }) {
-  const [count, setCount] = useState(0);
-  const [inputValue, setInputValue] = useState("");
+
+
+function AppComponent({ apiUrl }) {
   
-  axios.defaults.headers.common['x-csrf-token'] = sessionStorage.getItem("x-csrf-token");
-  
-  <input type="number"   value={inputValue}  onChange={(e) => setInputValue(e.target.value)}  />;
+    //-- Add token protection
+    axios.defaults.headers.common['x-csrf-token'] = sessionStorage.getItem("x-csrf-token");
+    
+    const [count, setCount] = useState(0);
+    const [inputValue, setInputValue] = useState("");
+    const [showCode, setShowCode] = useState(false);
 
-  const buttonStyle = {
-                      padding: "10px 15px",
-                      borderRadius: "5px",
-                      backgroundColor: "#3498db",
-                      color: "white",
-                      border: "none",
-                      cursor: "pointer",
-                      marginRight: "10px",
-  };
-
-  const buttonStyleCode = {
-                      padding: "10px 15px",
-                      borderRadius: "5px",
-                      backgroundColor: "#3a3a3a",
-                      color: "white",
-                      border: "none",
-                      cursor: "pointer",
-                      marginRight: "10px",
-  };
-
-  // New state for showing or hiding the code
-  const [showCode, setShowCode] = useState(false);
-
-  // Function to toggle the visibility of the code block
-  const toggleCode = () => {
-    setShowCode((prevState) => !prevState);
-  };
-
+    const toggleCode = () => {
+      setShowCode((prevState) => !prevState);
+    };
 
 
 
@@ -95,7 +77,7 @@ function Counter({ apiUrl }) {
   const setCounter = () => {
     
       axios.post(`${apiUrl}/api/counter/setCounter`, {
-          value: inputValue,
+          value: parseFloat(inputValue),
         })
         .then((response) => {
           setCount(response.data.value);
@@ -106,166 +88,109 @@ function Counter({ apiUrl }) {
 
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "20px",
-      }}
-    >
-      {/* Counter Display */}
-      <div
-        style={{
-          fontSize: "24px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <div
-          class="card"
-          style={{
-            padding: "10px 20px",
-            borderRadius: "8px",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <p style={{ marginRight: "10px" }}>
-            <i class="fa fa-user"> </i>
-          </p>
-          Count: {count}{" "}
-        </div>{" "}
+    
+    <>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <table style={{"width":"100%"}}>
+              <tr>
+                  <td style={{"width":"100%", "text-align":"center"}} >  
+                      <span style={{"font-size": "72px", "font-weight": "500","font-family": "Arial", }}>
+                          {count}
+                      </span>
+                  </td>   
+              </tr>    
+    </table>
+    <br/>
+    <br/>
+    <br/>
+     <ColumnLayout columns={4} variant="text-grid">
+      <div>
+          <Button variant="primary" onClick={increment}>Increment</Button>
       </div>
-      {/* Increment and Decrement buttons */}{" "}
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px",
-          marginBottom: "20px",
-        }}
-      >
-        <button onClick={increment} style={buttonStyle}>
-          Increment{" "}
-        </button>{" "}
-        <button onClick={decrement} style={buttonStyle}>
-          Decrement{" "}
-        </button>
-        <button onClick={incrementBy} style={buttonStyle}>
-          Increment +10{" "}
-        </button>{" "}
-        <button onClick={decrementBy} style={buttonStyle}>
-          Decrement -10{" "}
-        </button>
+      <div>
+          <Button variant="primary" onClick={decrement}>Decrement</Button>
       </div>
-      {/* Set Counter Manually */}{" "}
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "10px",
-          marginTop: "10px",
-        }}
-      >
-        <input
-          type="number"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Set Counter Value"
-          style={{
-            fontSize: "20px",
-            textAlign: "center",
-            width: "60%",
-            padding: "10px",
-          }}
-        />{" "}
-        <button onClick={setCounter} style={buttonStyle}>
-          Set Counter Value{" "}
-        </button>{" "}
+      <div>
+          <Button variant="primary" onClick={incrementBy}>Increment +10</Button>
       </div>
-      {/* Show/Hide Code button */}{" "}
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <button
-          className="code-button"
-          onClick={toggleCode}
-          style={buttonStyleCode}
-        >
-          {showCode ? "Hide the Code" : "Show the Code"}{" "}
-        </button>{" "}
+      <div>
+          <Button variant="primary" onClick={decrementBy}>Decrement +10</Button>
       </div>
-      {showCode && (
-        <div
-          className="code-container"
-          style={{
-            width: "100%",
-            marginBottom: "20px",
-            marginTop: "20px",
-          }}
-        >
-          <pre
-            style={{
-              padding: "20px",
-              borderRadius: "8px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              whiteSpace: "pre-wrap",
-              overflowWrap: "anywhere",
-              background: "#f7f7f7",
-            }}
-          >
+    </ColumnLayout>
+    
+    <ColumnLayout columns={2} variant="text-grid">
+      <div>
+          <table style={{"width":"350px"}}>
+              <tr>
+                  <td style={{"width":"150px", "text-align":"left"}} >  
+                      <Button variant="primary" onClick={setCounter} >Set Counter Value</Button>
+                      
+                  </td>    
+                  <td style={{"width":"130px", "text-align":"left"}} >  
+                      <Input
+                        onChange={({ detail }) => setInputValue(detail.value)}
+                        value={inputValue}
+                        placeholder="Set Counter Value"
+                      />
+                  </td>    
+              </tr>    
+          </table>    
+      </div>
+    </ColumnLayout>
+    <br/>
+    <ExpandableSection headerText="Example Code">
+      
+          <pre style={{padding: "10px",borderRadius: "8px",boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",whiteSpace: "pre-wrap",overflowWrap: "anywhere",background: "#f7f7f7",}}>
             <code>
               {" "}
-              {`////////////////////////////////////////////// String counter
-// Fetch the counter value from Redis
-app.get('/counter', (req, res) => {
-    client.get('counter', (err, reply) => {
-        if (err) return res.status(500).json({ error: 'Failed to fetch counter' });
-        res.json({ value: parseInt(reply || '0', 10) });
-    });
-});
-
-// Increment the counter using Redis INCR
-app.post('/increment', (req, res) => {
-    client.incr('counter', (err, reply) => {
-        if (err) return res.status(500).json({ error: 'Failed to increment counter' });
-        res.json({ value: parseInt(reply, 10) });
-    });
-});
-
-// Decrement the counter using Redis DECR
-app.post('/decrement', (req, res) => {
-    client.decr('counter', (err, reply) => {
-        if (err) return res.status(500).json({ error: 'Failed to decrement counter' });
-        res.json({ value: parseInt(reply, 10) });
-    });
-});
-
-// Set counter value in Redis
-app.post('/setCounter', (req, res) => {
-    const value = req.body.value;
-    client.set('counter', value, (err, reply) => {
-        if (err) return res.status(500).json({ error: 'Failed to set counter' });
-        res.json({ value: parseInt(value, 10) });
-    });
-});`}{" "}
+{`
+      // Fetch the counter value from Redis
+      app.get('/counter', (req, res) => {
+          client.get('counter', (err, reply) => {
+              if (err) return res.status(500).json({ error: 'Failed to fetch counter' });
+              res.json({ value: parseInt(reply || '0', 10) });
+          });
+      });
+      
+      // Increment the counter using Redis INCR
+      app.post('/increment', (req, res) => {
+          client.incr('counter', (err, reply) => {
+              if (err) return res.status(500).json({ error: 'Failed to increment counter' });
+              res.json({ value: parseInt(reply, 10) });
+          });
+      });
+      
+      // Decrement the counter using Redis DECR
+      app.post('/decrement', (req, res) => {
+          client.decr('counter', (err, reply) => {
+              if (err) return res.status(500).json({ error: 'Failed to decrement counter' });
+              res.json({ value: parseInt(reply, 10) });
+          });
+      });
+      
+      // Set counter value in Redis
+      app.post('/setCounter', (req, res) => {
+          const value = req.body.value;
+          client.set('counter', value, (err, reply) => {
+              if (err) return res.status(500).json({ error: 'Failed to set counter' });
+              res.json({ value: parseInt(value, 10) });
+          });
+  });`}
+                {" "}
             </code>{" "}
           </pre>{" "}
-        </div>
-      )}{" "}
-    </div>
+          
+          
+    </ExpandableSection>
+    
+    
+    </>
   );
 }
 
-export default Counter;
+export default AppComponent;

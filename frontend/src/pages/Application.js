@@ -2,17 +2,20 @@ import {useState,useEffect} from 'react'
 import { createSearchParams } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import Axios from 'axios'
-import { configuration, SideMainLayoutHeader,SideMainLayoutMenu, breadCrumbs } from './Configs';
+import { configuration, modulesInfo, SideMainLayoutHeader,SideMainLayoutMenu, breadCrumbs } from './Configs';
 
 import CustomHeader from "../components/HeaderApp";
 import AppLayout from "@cloudscape-design/components/app-layout";
 import SideNavigation from '@cloudscape-design/components/side-navigation';
 import Container from "@cloudscape-design/components/container";
+
+import Header from "@cloudscape-design/components/header";
 import '@aws-amplify/ui-react/styles.css';
 
 
 //-- Application Objects
 import AppObjCounter from "../components/AppObjCounter";
+import AppObjMonitor from "../components/AppObjMonitor";
 
 
 function Application() {
@@ -20,9 +23,12 @@ function Application() {
 
   //-- Gather Parameters
   const [params] = useSearchParams();
-  const paramCodeId = params.get("codeid");
-
-
+  var paramCodeId = params.get("codeid");
+    
+  console.log(paramCodeId);
+  
+  if (paramCodeId == null)
+    paramCodeId = "default";
 
   //-- Add Header Cognito Token
   Axios.defaults.headers.common['x-csrf-token'] = sessionStorage.getItem("x-csrf-token");
@@ -65,20 +71,37 @@ function Application() {
             contentType="table"
             content={
                 <>
-                
-                    <br />
-                    <Container>
-                      
-                      
-                      {paramCodeId === "dt01" && (
-                        
-                        <AppObjCounter apiUrl={configuration["apps-settings"]["api-url"]} />
-                        
-                      )}
-                      
-                      
-                    </Container>
-                      
+                <br />
+                {paramCodeId != "default"  && (
+                                <Container
+                                    header={
+                                        <Header
+                                          variant="h2"
+                                          description={modulesInfo[paramCodeId].description}
+                                        >
+                                          {modulesInfo[paramCodeId].title}
+                                        </Header>
+                                      }
+                                >
+                                <table style={{"width":"100%"}}>
+                                    <tr>
+                                        <td style={{"width":"70%", "text-align":"left", "padding-right": "1em",}} >  
+                                                  
+                                                      {paramCodeId === "dt01" && (
+                                                        
+                                                        <AppObjCounter apiUrl={configuration["apps-settings"]["api-url"]} />
+                                                        
+                                                      )}
+                                           
+                                        </td>
+                                        <td style={{"width":"30%", "text-align":"left", "padding-left": "2em","border-left": "2pt solid red"}} >  
+                                                    <AppObjMonitor />
+                                        </td>
+                                    </tr>
+                                </table>
+                               
+                               </Container>
+                )}
                 </>
                 
             }

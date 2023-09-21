@@ -26,6 +26,8 @@ app.use(csrfProtection);
 
 
 
+
+
 // Security Variables
 const jwt = require('jsonwebtoken');
 var jwkToPem = require('jwk-to-pem');
@@ -41,6 +43,46 @@ const redisClient = Redis.createClient({
   host: configData.aws_redis_server,
   port: configData.aws_redis_port,
 });
+
+
+
+
+//-- Socket variables
+const wsport = configData.aws_socket_port;
+const httpws = require("http");
+const WebSocket = require("ws");
+
+const wsapp = express();
+const server = httpws.createServer(wsapp);
+const wss = new WebSocket.Server({ server });
+
+
+wss.on("connection", (ws) => {
+  
+  console.log("WS connected.");
+
+  const redisClientWs = Redis.createClient({
+    host: configData.aws_redis_server,
+    port: configData.aws_redis_port,
+  });
+
+  
+  redisClientWs.monitor((err, monitor) => {
+    if (err) throw err;
+
+    console.log("Connected to Redis.");
+
+    monitor.on("monitor", (time, args, source, database) => {
+      ws.send(JSON.stringify({ time, args }));
+    });
+  });
+
+  ws.on("close", () => {
+    console.log("Client disconnected.");
+    redisClientWs.disconnect();
+  });
+});
+
 
 
 
@@ -174,7 +216,10 @@ app.get("/api/counter/default", (req, res) => {
     
       
       redisClient.get("counter", (err, reply) => {
-        if (err) return res.status(500).json({ error: "Failed to fetch counter" });
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Failed to fetch counter" });
+        }
         res.json({ value: parseInt(reply || "0", 10) });
       });
       
@@ -257,5 +302,10 @@ app.post("/api/counter/setCounter", (req, res) => {
 
 
 app.listen(port, ()=>{
-    console.log(`Server is running on ${port}`)
+    console.log(`API Server is running on ${port}`)
 })
+
+
+server.listen(wsport, () => {
+  console.log(`Socket Server is running on ${wsport}`)
+});
